@@ -71,46 +71,70 @@ async function activate(context) {
     // handle
     async function copyHandle() {
       // // 判断配置项
-      // if (res.configUrl) {
-      //   update()
-      //   return
-      // }
+      if (gist && (gist.configID || gist.configRaw)) {
+        const { globalValue, workspaceValue } = await vscode.workspace
+          .getConfiguration('prettier-config')
+          .inspect('gist')
 
-      if (gist.configRaw) {
-        fs.writeFileSync(`${workspace}/.prettierrc`, await download(gist.configRaw))
+        // console.log('globalValue:', globalValue)
+        // console.log('gist:', gist)
+
+        // configID
+        if (workspaceValue && workspaceValue.configID) {
+          settingsTip('workspace')
+          return
+        }
+        if (globalValue && globalValue.configID) {
+          settingsTip('current')
+          return
+        }
+
+        if (gist.configID && !globalValue) {
+          settingsTip('global')
+          return
+        }
+
+        if (gist.configRaw) {
+          fs.writeFileSync(`${workspace}/.prettierrc`, await download(gist.configRaw))
+        }
         if (gist.ignoreRaw) {
           fs.writeFileSync(`${workspace}/.prettierignore`, await download(gist.ignoreRaw))
         }
         tip()
-        return
-      } else if (gist.configID) {
-        const { workspaceValue } = await vscode.workspace
-          .getConfiguration('prettier-config')
-          .inspect('gist')
+      } else {
+        fs.writeFileSync(`${workspace}/.prettierrc`, defaultConfigFile)
+        if (createIgnoreFile) fs.writeFileSync(`${workspace}/.prettierignore`, defaultIgnoreFile)
+        tip()
+      }
+    }
 
-        vscode.window
-          .showWarningMessage(`Please reset prettier-config.gist`, 'Open settings.json')
-          .then(value => {
-            if (value === 'Open settings.json') {
-              if (workspaceValue && workspaceValue.configID) {
+    function settingsTip(scope) {
+      vscode.window
+        .showWarningMessage(`Please reset prettier-config.gist`, 'Open settings.json')
+        .then(value => {
+          if (value === 'Open settings.json') {
+            switch (scope) {
+              case 'workspace':
                 vscode.commands.executeCommand('workbench.action.openWorkspaceSettingsFile')
                 vscode.workspace
                   .getConfiguration('prettier-config')
                   .update('gist', { configRaw: '' }, false)
-              } else {
+                break
+
+              case 'current':
                 vscode.commands.executeCommand('workbench.action.openSettingsJson')
                 vscode.workspace
                   .getConfiguration('prettier-config')
                   .update('gist', { configRaw: '' }, true)
-              }
+                break
+              case 'global':
+                vscode.window.showWarningMessage(
+                  `Please check your default profile for sure you already reset 'configID' to 'configRaw'`
+                )
+                break
             }
-          })
-        return
-      }
-
-      fs.writeFileSync(`${workspace}/.prettierrc`, defaultConfigFile)
-      if (createIgnoreFile) fs.writeFileSync(`${workspace}/.prettierignore`, defaultIgnoreFile)
-      tip()
+          }
+        })
     }
 
     // tip
