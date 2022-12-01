@@ -85,7 +85,6 @@ async function activate(context) {
         fs.writeFileSync(`${workspace}/.prettierrc`, defaultConfigFile)
         if (createIgnoreFile) fs.writeFileSync(`${workspace}/.prettierignore`, defaultIgnoreFile)
       }
-      tip()
     }
 
     // tip
@@ -110,8 +109,10 @@ async function activate(context) {
     }
 
     // 判断工作区是否存在配置文件
-    if (!fs.existsSync(`${workspace}/.prettierrc`)) copyHandle()
-    else
+    if (!fs.existsSync(`${workspace}/.prettierrc`)) {
+      copyHandle()
+      tip()
+    } else
       vscode.window
         .showWarningMessage(
           'An .prettierrc file already exists in this workspace.',
@@ -119,7 +120,9 @@ async function activate(context) {
           'OK'
         )
         .then(value => {
-          value === 'Replace' ? copyHandle() : null
+          if (value === 'Replace') {
+            copyHandle()
+          }
         })
   })
 
