@@ -54,7 +54,7 @@
           "items": {
             "type": "string"
           },
-          "description": "Sync configuration files from gist."
+          "description": "Sync configuration files from gist. Use raw URL."
         },
         "prettier-config.ignore": {
           "type": "boolean",
