@@ -1,8 +1,8 @@
 {
   "name": "prettier-config",
   "displayName": "PrettierConfig for VS Code",
-  "description": "Generate .prettierrc.js & .prettierignore in the workspace",
-  "version": "1.3.0",
+  "description": "Generate .prettierrc & .prettierignore in the workspace",
+  "version": "1.4.0",
   "publisher": "whosydd",
   "main": "./extension.js",
   "engines": {
@@ -49,12 +49,17 @@
         "prettier-config.gist": {
           "type": "object",
           "required": [
-            "configID"
+            "configRaw"
           ],
           "items": {
             "type": "string"
           },
           "description": "Sync configuration files from gist."
+        },
+        "prettier-config.ignore": {
+          "type": "boolean",
+          "default": false,
+          "description": "Toggle whether to create .prettierignore"
         },
         "prettier-config.tip": {
           "type": "boolean",
@@ -92,6 +97,6 @@
     "esbenp.prettier-vscode"
   ],
   "dependencies": {
-    "axios": "^0.21.1"
+    "download": "^8.0.0"
   }
 }
