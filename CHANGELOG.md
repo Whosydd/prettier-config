@@ -2,6 +2,11 @@
 
 All notable changes to the **PrettierConfig for VS Code** extension will be documented in this file.
 
+## [1.4.0]
+
+- 修改生成文件为 `.prettierrc`
+- 通过 `gist` 获取配置文件时，使用 `raw URL` 获取
+
 ## [1.3.0]
 
 - add pnpm

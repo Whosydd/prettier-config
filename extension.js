@@ -1,6 +1,7 @@
 const vscode = require('vscode')
 const fs = require('fs')
-const axios = require('axios')
+const download = require('download')
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -35,9 +36,10 @@ async function activate(context) {
   let prettier = vscode.commands.registerCommand('prettier-config', async function (folder) {
     // 获取配置项
     const flag = await vscode.workspace.getConfiguration('prettier-config').get('tip')
-    const res = await vscode.workspace.getConfiguration('prettier-config').get('gist')
-    const { configID, ignoreID } = res
-
+    const gist = await vscode.workspace.getConfiguration('prettier-config').get('gist')
+    const createIgnoreFile = await vscode.workspace
+      .getConfiguration('prettier-config')
+      .get('ignore')
     let tool = await vscode.workspace.getConfiguration('prettier-config').get('tool')
 
     // 获取工作区路径
@@ -63,43 +65,25 @@ async function activate(context) {
     }
 
     // default
-    const defaultConfigFile = fs.readFileSync(`${__dirname}/template/.prettierrc.js`, 'utf-8')
+    const defaultConfigFile = fs.readFileSync(`${__dirname}/template/.prettierrc`, 'utf-8')
     const defaultIgnoreFile = fs.readFileSync(`${__dirname}/template/.prettierignore`, 'utf-8')
 
     // handle
-    function copyHandle() {
-      // // 判断配置项
-      // if (res.configUrl) {
-      //   update()
-      //   return
-      // }
-      if (configID) {
-        axios
-          .get('https://api.github.com/gists/' + configID)
-          .then(res => {
-            const configFile = res.data.files['.prettierrc.js'].content
-            fs.writeFileSync(`${workspace}/.prettierrc.js`, configFile)
-            tip()
-          })
-          .catch(err => {
-            vscode.window.showErrorMessage(err.message)
-          })
-        if (ignoreID) {
-          axios
-            .get('https://api.github.com/gists/' + ignoreID)
-            .then(res => {
-              const ignoreFile = res.data.files['.prettierignore'].content
-              fs.writeFileSync(`${workspace}/.prettierignore`, ignoreFile)
-              tip()
-            })
-            .catch(err => {
-              vscode.window.showErrorMessage(err.message)
-            })
+    async function copyHandle() {
+      if (gist && (gist.configID || gist.configRaw)) {
+        if (gist.configID) {
+          tipConfigGist()
+          return
+        }
+        if (gist.configRaw) {
+          fs.writeFileSync(`${workspace}/.prettierrc`, await download(gist.configRaw))
+          if (gist.ignoreRaw) {
+            fs.writeFileSync(`${workspace}/.prettierignore`, await download(gist.ignoreRaw))
+          }
         }
       } else {
-        fs.writeFileSync(`${workspace}/.prettierrc.js`, defaultConfigFile)
-        fs.writeFileSync(`${workspace}/.prettierignore`, defaultIgnoreFile)
-        tip()
+        fs.writeFileSync(`${workspace}/.prettierrc`, defaultConfigFile)
+        if (createIgnoreFile) fs.writeFileSync(`${workspace}/.prettierignore`, defaultIgnoreFile)
       }
     }
 
@@ -112,7 +96,6 @@ async function activate(context) {
           if (answer === 'Install') {
             // 确定参数
             if (tool === '' || tool === undefined) {
-              tipConfigFormat()
               return
             }
             let param
@@ -126,15 +109,10 @@ async function activate(context) {
     }
 
     // 判断工作区是否存在配置文件
-    if (
-      !fs.existsSync(
-        `${workspace}/.prettierrc.js` ||
-          `${workspace}/.prettierrc` ||
-          `${workspace}/.prettierrc.json`
-      )
-    )
+    if (!fs.existsSync(`${workspace}/.prettierrc`)) {
       copyHandle()
-    else
+      tip()
+    } else
       vscode.window
         .showWarningMessage(
           'An .prettierrc file already exists in this workspace.',
@@ -142,7 +120,9 @@ async function activate(context) {
           'OK'
         )
         .then(value => {
-          value === 'Replace' ? copyHandle() : null
+          if (value === 'Replace') {
+            copyHandle()
+          }
         })
   })
 
@@ -156,34 +136,35 @@ module.exports = {
 }
 
 // new config tip
-const tipConfigFormat = () => {
+const tipConfigGist = () => {
   vscode.window
-    .showInformationMessage(
-      'PrettierConfig for VS Code 1.3.0 NEW!',
+    .showWarningMessage(
+      'PrettierConfig for VS Code 1.4.0 NEW!',
       {
         modal: true,
-        detail: `Now you need to decide which one do you want.
-        It will be added to your settings.
+        detail: `Sorry, now you need to use raw URL for gist.
+
+        Issues: If you see this dialog many times, please switch to the other profile which installed this extension and replace 'configID' with 'configRaw'.
         
-        For details, please refer to the extension page.`,
+        For the details, please refer to the extension page.`,
       },
-      'npm',
-      'yarn',
-      'pnpm'
+      'Global Settings',
+      'Workspace Settings'
     )
-    .then(tool => {
-      if (tool === undefined) {
+    .then(value => {
+      if (value === undefined) {
         return
       }
-      vscode.workspace.getConfiguration('prettier-config').update('tool', tool, true)
-
-      let param
-      tool === 'npm' ? (param = 'i') : (param = 'add')
-
-      let command = `${tool} ${param} -D prettier`
-
-      // 安装依赖
-      exec(command)
+      if (value === 'Global Settings') {
+        vscode.commands.executeCommand('workbench.action.openSettingsJson')
+        vscode.workspace.getConfiguration('prettier-config').update('gist', { configRaw: '' }, true)
+      }
+      if (value === 'Workspace Settings') {
+        vscode.commands.executeCommand('workbench.action.openWorkspaceSettingsFile')
+        vscode.workspace
+          .getConfiguration('prettier-config')
+          .update('gist', { configRaw: '' }, false)
+      }
     })
     .catch(err => vscode.window.showErrorMessage(err))
 }
