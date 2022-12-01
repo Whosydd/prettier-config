@@ -29,7 +29,7 @@
 // settings.json:
 "prettier-config.gist": {
     // Use raw URL
-    "configRaw": "https://gist.githubusercontent.com/whosydd/3d7554d6818b0f9c9a2ec8e928857211/raw/423e50984d1060403822e5a62c56d5bb45511a00/.prettierrc",
+    "configRaw": "https://gist.githubusercontent.com/whosydd/3d7554d6818b0f9c9a2ec8e928857211/raw/354d4100aa23e8d9379e07d74ad6e4151f482c22/.prettierrc",
     // If you want to generate a .prettierignore file
     // "ignoreRaw": ""
 },
@@ -49,14 +49,14 @@
 #### .prettierrc
 
 ```yaml
-printWidth: 100, # 代码宽度建议不超过100字符
-tabWidth: 2, # tab缩进2个空格
-semi: false, # 末尾分号
-singleQuote: true, # 单引号
-jsxSingleQuote: true, # jsx中使用单引号
-trailingComma: 'es5', # 尾随逗号
-arrowParens: 'avoid', # 箭头函数仅在必要时使用()
-htmlWhitespaceSensitivity: 'css', # html空格敏感度
+printWidth: 100 # 代码宽度建议不超过100字符
+tabWidth: 2 # tab缩进2个空格
+semi: false # 末尾分号
+singleQuote: true # 单引号
+jsxSingleQuote: true # jsx中使用单引号
+trailingComma: 'es5' # 尾随逗号
+arrowParens: 'avoid' # 箭头函数仅在必要时使用()
+htmlWhitespaceSensitivity: 'css' # html空格敏感度
 ```
 
 #### .prettierignore
