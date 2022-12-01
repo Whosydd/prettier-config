@@ -34,6 +34,10 @@
 },
 ```
 
+> If you got **Please reset prettier-config.gist** many times.
+>
+> Please check your **default profile** and for sure you already reset `configID` to `configRaw`.
+
 ### tip
 
 ```json
