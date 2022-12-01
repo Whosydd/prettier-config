@@ -16,16 +16,11 @@
 
 ## Configuration
 
-### 1.3.0 new！
-
-You will see this when you choice `Install`
-
-![image-20221003011635010](https://raw.githubusercontent.com/whosydd/images-in-one/main/images/202210030116547.png)
-
-Or you can config this in your `settings.json`
+### package manager
 
 ```json
-"prettier-config.tool": "npm"
+// settings.json:
+"prettier-config.tool": "npm" // support 'npm' 'yarn' 'pnpm'
 ```
 
 ### Sync from gist
