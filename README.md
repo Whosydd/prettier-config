@@ -73,4 +73,4 @@ build/
 
 ## Issues
 
-- If you see this dialog many times, please switch to the other profile which installed this extension and back.
+- If you see this dialog many times, please switch to the other profile which installed this extension and replace 'configID' with 'configRaw'.

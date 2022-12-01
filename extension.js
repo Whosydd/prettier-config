@@ -141,7 +141,7 @@ const tipConfigGist = () => {
         modal: true,
         detail: `Sorry, now you need to use raw URL for gist.
 
-        Issues: If you see this dialog many times, please switch to the other profile which installed this extension and back.
+        Issues: If you see this dialog many times, please switch to the other profile which installed this extension and replace 'configID' with 'configRaw'.
         
         For the details, please refer to the extension page.`,
       },
