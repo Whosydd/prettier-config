@@ -74,3 +74,5 @@ build/
 ## Issues
 
 - If you see this dialog many times, please switch to the other profile which installed this extension and replace 'configID' with 'configRaw'.
+
+![image-20221202003711804](https://raw.githubusercontent.com/whosydd/images-in-one/main/images/202212020038817.png)
