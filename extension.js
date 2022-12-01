@@ -70,71 +70,22 @@ async function activate(context) {
 
     // handle
     async function copyHandle() {
-      // // 判断配置项
-      if (gist && (gist.configID || gist.configRaw)) {
-        const { globalValue, workspaceValue } = await vscode.workspace
-          .getConfiguration('prettier-config')
-          .inspect('gist')
-
-        // console.log('globalValue:', globalValue)
-        // console.log('gist:', gist)
-
-        // configID
-        if (workspaceValue && workspaceValue.configID) {
-          settingsTip('workspace')
+      if (gist) {
+        if (gist.configID) {
+          tipConfigGist()
           return
         }
-        if (globalValue && gist.configID) {
-          settingsTip('current')
-          return
-        }
-
-        if (gist.configID && !globalValue) {
-          settingsTip('global')
-          return
-        }
-
         if (gist.configRaw) {
           fs.writeFileSync(`${workspace}/.prettierrc`, await download(gist.configRaw))
         }
         if (gist.ignoreRaw) {
           fs.writeFileSync(`${workspace}/.prettierignore`, await download(gist.ignoreRaw))
         }
-        tip()
       } else {
         fs.writeFileSync(`${workspace}/.prettierrc`, defaultConfigFile)
         if (createIgnoreFile) fs.writeFileSync(`${workspace}/.prettierignore`, defaultIgnoreFile)
-        tip()
       }
-    }
-
-    function settingsTip(scope) {
-      vscode.window
-        .showWarningMessage(`Please reset prettier-config.gist`, 'Open settings.json')
-        .then(value => {
-          if (value === 'Open settings.json') {
-            switch (scope) {
-              case 'workspace':
-                vscode.commands.executeCommand('workbench.action.openWorkspaceSettingsFile')
-                vscode.workspace
-                  .getConfiguration('prettier-config')
-                  .update('gist', { configRaw: '' }, false)
-                break
-
-              case 'current':
-                vscode.commands.executeCommand('workbench.action.openSettingsJson')
-                vscode.workspace
-                  .getConfiguration('prettier-config')
-                  .update('gist', { configRaw: '' }, true)
-                break
-              case 'global':
-                vscode.window.showWarningMessage(
-                  `Please check your default profile for sure you already reset 'configID' to 'configRaw'`
-                )
-                break
-            }
-          }
-        })
+      tip()
     }
 
     // tip
@@ -146,7 +97,6 @@ async function activate(context) {
           if (answer === 'Install') {
             // 确定参数
             if (tool === '' || tool === undefined) {
-              tipConfigFormat()
               return
             }
             let param
@@ -183,34 +133,35 @@ module.exports = {
 }
 
 // new config tip
-const tipConfigFormat = () => {
+const tipConfigGist = () => {
   vscode.window
-    .showInformationMessage(
-      'PrettierConfig for VS Code 1.3.0 NEW!',
+    .showWarningMessage(
+      'PrettierConfig for VS Code 1.4.0 NEW!',
       {
         modal: true,
-        detail: `Now you need to decide which one do you want.
-        It will be added to your settings.
+        detail: `Sorry, now you need to use raw URL for gist.
+
+        Issues: If you see this dialog many times, please switch to the other profile which installed this extension and back.
         
-        For details, please refer to the extension page.`,
+        For the details, please refer to the extension page.`,
       },
-      'npm',
-      'yarn',
-      'pnpm'
+      'Global Settings',
+      'Workspace Settings'
     )
-    .then(tool => {
-      if (tool === undefined) {
+    .then(value => {
+      if (value === undefined) {
         return
       }
-      vscode.workspace.getConfiguration('prettier-config').update('tool', tool, true)
-
-      let param
-      tool === 'npm' ? (param = 'i') : (param = 'add')
-
-      let command = `${tool} ${param} -D prettier`
-
-      // 安装依赖
-      exec(command)
+      if (value === 'Global Settings') {
+        vscode.commands.executeCommand('workbench.action.openSettingsJson')
+        vscode.workspace.getConfiguration('prettier-config').update('gist', { configRaw: '' }, true)
+      }
+      if (value === 'Workspace Settings') {
+        vscode.commands.executeCommand('workbench.action.openWorkspaceSettingsFile')
+        vscode.workspace
+          .getConfiguration('prettier-config')
+          .update('gist', { configRaw: '' }, false)
+      }
     })
     .catch(err => vscode.window.showErrorMessage(err))
 }
