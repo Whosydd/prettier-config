@@ -2,6 +2,10 @@
 
 All notable changes to the **PrettierConfig for VS Code** extension will be documented in this file.
 
+## [1.4.1]
+
+- 修正 `.prettierrc` 文本格式
+
 ## [1.4.0]
 
 - 修改生成文件为 `.prettierrc`
