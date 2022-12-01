@@ -76,7 +76,14 @@ async function activate(context) {
       //   return
       // }
 
-      if (gist.configID !== undefined) {
+      if (gist.configRaw) {
+        fs.writeFileSync(`${workspace}/.prettierrc`, await download(gist.configRaw))
+        if (gist.ignoreRaw) {
+          fs.writeFileSync(`${workspace}/.prettierignore`, await download(gist.ignoreRaw))
+        }
+        tip()
+        return
+      } else if (gist.configID) {
         const { workspaceValue } = await vscode.workspace
           .getConfiguration('prettier-config')
           .inspect('gist')
@@ -101,14 +108,6 @@ async function activate(context) {
         return
       }
 
-      if (gist.configRaw) {
-        fs.writeFileSync(`${workspace}/.prettierrc`, await download(gist.configRaw))
-        if (gist.ignoreRaw) {
-          fs.writeFileSync(`${workspace}/.prettierignore`, await download(gist.ignoreRaw))
-        }
-        tip()
-        return
-      }
       fs.writeFileSync(`${workspace}/.prettierrc`, defaultConfigFile)
       if (createIgnoreFile) fs.writeFileSync(`${workspace}/.prettierignore`, defaultIgnoreFile)
       tip()
