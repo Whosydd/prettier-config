@@ -84,7 +84,7 @@ async function activate(context) {
           settingsTip('workspace')
           return
         }
-        if (globalValue && globalValue.configID) {
+        if (globalValue && gist.configID) {
           settingsTip('current')
           return
         }
