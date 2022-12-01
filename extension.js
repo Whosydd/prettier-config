@@ -70,16 +70,16 @@ async function activate(context) {
 
     // handle
     async function copyHandle() {
-      if (gist) {
+      if (gist && (gist.configID || gist.configRaw)) {
         if (gist.configID) {
           tipConfigGist()
           return
         }
         if (gist.configRaw) {
           fs.writeFileSync(`${workspace}/.prettierrc`, await download(gist.configRaw))
-        }
-        if (gist.ignoreRaw) {
-          fs.writeFileSync(`${workspace}/.prettierignore`, await download(gist.ignoreRaw))
+          if (gist.ignoreRaw) {
+            fs.writeFileSync(`${workspace}/.prettierignore`, await download(gist.ignoreRaw))
+          }
         }
       } else {
         fs.writeFileSync(`${workspace}/.prettierrc`, defaultConfigFile)
