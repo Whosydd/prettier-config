@@ -4,9 +4,9 @@
 
 - prettier
 
-## ExtensionDependencies
+## Extension Dependencies
 
-- [prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
 ## Usage
 
@@ -28,6 +28,7 @@
 ```json
 // settings.json:
 "prettier-config.gist": {
+    // Use raw URL
     "configRaw": "https://gist.githubusercontent.com/whosydd/3d7554d6818b0f9c9a2ec8e928857211/raw/423e50984d1060403822e5a62c56d5bb45511a00/.prettierrc",
     // If you want to generate a .prettierignore file
     // "ignoreRaw": ""
@@ -69,3 +70,7 @@ node_modules/
 dist/
 build/
 ```
+
+## Issues
+
+- If you see this dialog many times, please switch to the other profile which installed this extension and back.
