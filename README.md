@@ -33,18 +33,11 @@ Or you can config this in your `settings.json`
 ```json
 // settings.json:
 "prettier-config.gist": {
-    "configID": "88cdd14ce8d329da28fcaa94a0b5a57d",
-    // 如果不想生成 .prettierignore 文件，请不要设置 ignoreID
-    // If you do not want to generate a .prettierignore file, please do not set 'ignoreID'
-    "ignoreID": "55645a46fe427b45334d20b2df5aaf50"
+    "configRaw": "https://gist.githubusercontent.com/whosydd/3d7554d6818b0f9c9a2ec8e928857211/raw/423e50984d1060403822e5a62c56d5bb45511a00/.prettierrc",
+    // If you want to generate a .prettierignore file
+    // "ignoreRaw": ""
 },
 ```
-
-可以选择在[gist](https://gist.github.com/)上添加`.prettierrc.js`以及`.prettierignore`，将`gist_id`添加到配置项中，扩展会通过`ajax`请求获取相应配置文件
-
-#### 获取`gist_id`:
-
-![Capture](https://raw.githubusercontent.com/whosydd/images-in-one/main/20210719143245.PNG)
 
 ### tip
 
@@ -53,32 +46,21 @@ Or you can config this in your `settings.json`
 "prettier-config.tip": true //default
 ```
 
-```bash
-# You can choose to install prettier manually
-npm i -D prettier
-```
-
-设置为`false`时，将不再提示`install prettier`
-
 ![Capture](https://raw.githubusercontent.com/whosydd/images-in-one/main/20210711234457.PNG)
 
 ### default
 
-默认情况下，将直接从扩展的`template`目录复制以下配置文件
+#### .prettierrc
 
-#### .prettierrc.js
-
-```js
-module.exports = {
-  printWidth: 100, // 代码宽度建议不超过100字符
-  tabWidth: 2, // tab缩进2个空格
-  semi: false, // 末尾分号
-  singleQuote: true, // 单引号
-  jsxSingleQuote: true, // jsx中使用单引号
-  trailingComma: 'es5', // 尾随逗号
-  arrowParens: 'avoid', // 箭头函数仅在必要时使用()
-  htmlWhitespaceSensitivity: 'css', // html空格敏感度
-}
+```yaml
+printWidth: 100, # 代码宽度建议不超过100字符
+tabWidth: 2, # tab缩进2个空格
+semi: false, # 末尾分号
+singleQuote: true, # 单引号
+jsxSingleQuote: true, # jsx中使用单引号
+trailingComma: 'es5', # 尾随逗号
+arrowParens: 'avoid', # 箭头函数仅在必要时使用()
+htmlWhitespaceSensitivity: 'css', # html空格敏感度
 ```
 
 #### .prettierignore
